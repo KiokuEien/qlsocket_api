@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, ForeignKey, UniqueConstraint, Index
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 from app.models.mixins import BaseMixin
