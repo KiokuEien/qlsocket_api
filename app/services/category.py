@@ -1,3 +1,4 @@
+from typing import Sequence
 from sqlalchemy.exc import IntegrityError
 
 from app.utils.unit_of_work import UnitOfWork
@@ -28,3 +29,7 @@ class CategoryService:
         if not category:
             raise NotFoundError(message='Category is not found')
         return category
+
+    async def get_categories(self, with_products: bool = False) -> Sequence[Category]:
+        # REST правило: коллекция существует всегда, даже если пустая
+        return await self.repo.get_categories(with_products=with_products)

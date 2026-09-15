@@ -1,3 +1,4 @@
+from typing import Sequence
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,3 +26,10 @@ class CategoryRepository:
         if with_products:
             stmt = stmt.options(selectinload(Category.products))
         return await self.session.scalar(stmt)
+
+    async def get_categories(self, with_products: bool = False) -> Sequence[Category]:
+        stmt = select(Category).order_by(Category.id)
+        if with_products:
+            stmt = stmt.options(selectinload(Category.products))
+        result = await self.session.scalars(stmt)
+        return result.all()
