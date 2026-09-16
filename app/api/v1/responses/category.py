@@ -6,3 +6,7 @@ class CategoriesResponse(BaseModel):
     success: bool
     total: int
     categories: list[CategoryRead]
+
+class CategoryResponse(BaseModel):
+    success: bool
+    category: CategoryRead
