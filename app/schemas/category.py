@@ -13,3 +13,10 @@ class CategoryRead(CategoryBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+class CategoryUpdate(CategoryBase):
+    pass
+
+class CategoryUpdatePartial(CategoryBase):
+    name: str | None = None
+    description: str | None = None
