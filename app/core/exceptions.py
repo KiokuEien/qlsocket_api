@@ -16,6 +16,7 @@ class ForbiddenError(AppError):
     code = 'FORBIDDEN'
     message = 'Access denied'
 
+
 class ConflictError(AppError):
     status_code = 409
     code = 'CONFLICT'

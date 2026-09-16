@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 class CategoryBase(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     name: str
     description: str | None
 
