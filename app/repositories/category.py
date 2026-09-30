@@ -40,12 +40,14 @@ class CategoryRepository:
             category_update: CategoryUpdate | CategoryUpdatePartial,
     ) -> Category | None:
         category = await self.session.scalar(select(Category).where(Category.id == category_id))
-        if not category:
-            return None
-        for key, value in category_update.model_dump(exclude_unset=True).items():
-            setattr(category, key, value)
-        await self.session.flush()
-        return category
+        if category:
+            for key, value in category_update.model_dump(exclude_unset=True).items():
+                setattr(category, key, value)
+            await self.session.flush()
+            # После flush() некоторые поля (например, updated_at) протухают, поэтому нужно перезагрузить объект из бд
+            await self.session.refresh(category)
+            return category
+        return None
 
     async def delete_category(self, category_id: int) -> Category | None:
         category = await self.session.scalar(select(Category).where(Category.id == category_id))
