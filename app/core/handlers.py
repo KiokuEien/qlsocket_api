@@ -22,14 +22,26 @@ def register_exception_handler(app: FastAPI) -> None:
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        error = exc.errors()[0]
+        error_message = {
+            'code': 'VALIDATION_ERROR',
+            'type': error['type'],
+            'field': '.'.join(str(x) for x in error['loc'] if x != 'body'),
+            'message': error.get('msg', 'Invalid request'),
+        }
+
+        if error['type'] == 'json_invalid':
+            error_message = {
+                'code': 'JSON_DECODE_ERROR',
+                'type': 'json_invalid',
+                'message': error['ctx']['error'],
+            }
+
         return JSONResponse(
             status_code=422,
             content={
                 'success': False,
-                'error': {
-                    'code': 'VALIDATION_ERROR',
-                    'message': 'Invalid request',
-                }
+                'error': error_message,
             }
         )
 

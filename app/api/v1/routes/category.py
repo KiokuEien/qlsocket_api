@@ -43,3 +43,11 @@ async def update_category_partial(
     return {
         'category': category,
     }
+
+@router.delete(
+    '/categories/{category_id}', status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_category(category_service: CategoryDep, category_id: int):
+    # delete_category возвращает удаляемый category, но мы используем "чистый" REST подход
+    # и вернем 204 без тела ответа
+    await category_service.delete_category(category_id)

@@ -1,10 +1,10 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
 class CategoryBase(BaseModel):
     model_config = ConfigDict(extra='forbid')
-    name: str
-    description: str | None
+    name: str = Field(max_length=100)
+    description: str | None = Field(max_length=1000)
 
 class CategoryCreate(CategoryBase):
     pass
