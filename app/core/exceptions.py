@@ -15,17 +15,3 @@ class ForbiddenError(AppError):
     status_code = 403
     code = 'FORBIDDEN'
     message = 'Access denied'
-
-
-class ConflictError(AppError):
-    status_code = 409
-    code = 'CONFLICT'
-    message = 'Operation violates data constraints'
-
-class DuplicateError(ConflictError):
-    code = 'DUPLICATE'
-    message = 'Resource already exists'
-
-class ForeignKeyError(ConflictError):
-    code = 'FOREIGN_KEY'
-    message = 'Referenced resource does not exists'

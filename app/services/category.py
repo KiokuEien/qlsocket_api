@@ -1,10 +1,9 @@
 from typing import Sequence
-from sqlalchemy.exc import IntegrityError
 
 from app.utils.unit_of_work import UnitOfWork
 from app.models.category import Category
 from app.repositories.category import CategoryRepository
-from app.core.exceptions import DuplicateError, NotFoundError
+from app.core.exceptions import NotFoundError
 from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryUpdatePartial
 
 
@@ -14,10 +13,7 @@ class CategoryService:
         self.repo = CategoryRepository(self.uow.session)
 
     async def create_category(self, data: CategoryCreate) -> Category:
-        try:
-            category = await self.repo.create_category(data)
-        except IntegrityError:
-            raise DuplicateError(message='A category with this name already exists')
+        category = await self.repo.create_category(data)
         return category
 
     async def get_category(
@@ -39,13 +35,10 @@ class CategoryService:
             category_id: int,
             category_update: CategoryUpdate | CategoryUpdatePartial,
     ) -> Category:
-        try:
-            category = await self.repo.update_category(
-                category_id=category_id,
-                category_update=category_update,
-            )
-        except IntegrityError:
-                raise DuplicateError(message='A category with this name already exists')
+        category = await self.repo.update_category(
+            category_id=category_id,
+            category_update=category_update,
+        )
         if not category:
             raise NotFoundError(message='A category with this id was not found')
         return category
