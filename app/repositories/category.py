@@ -8,7 +8,7 @@ from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryUpdateP
 
 
 class CategoryRepository:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def create_category(self, data: CategoryCreate) -> Category:
