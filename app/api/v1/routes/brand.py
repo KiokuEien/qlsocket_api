@@ -6,7 +6,7 @@ from app.api.v1.responses.brand import BrandsResponse, BrandResponse
 
 router = APIRouter()
 
-@router.get('/brands/', response_model=BrandsResponse)
+@router.get('/brands/', response_model=BrandsResponse, summary='Get all brands')
 async def get_brands(brand_service: BrandDep):
     brands = await brand_service.get_brands()
     return {
@@ -47,5 +47,5 @@ async def update_brand_partial(
 @router.delete(
     '/brands/{brand_id}', status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_brand(brand_service: BrandDep, brand_id: int):
+async def delete_brand(brand_service: BrandDep, brand_id: int) -> None:
     await brand_service.delete_brand(brand_id)

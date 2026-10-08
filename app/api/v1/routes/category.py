@@ -6,7 +6,7 @@ from app.api.v1.responses.category import CategoriesResponse, CategoryResponse
 
 router = APIRouter()
 
-@router.get('/categories/', response_model=CategoriesResponse)
+@router.get('/categories/', response_model=CategoriesResponse, summary='Get all categories')
 async def get_categories(category_service: CategoryDep):
     categories = await category_service.get_categories()
     return {
@@ -47,7 +47,7 @@ async def update_category_partial(
 @router.delete(
     '/categories/{category_id}', status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_category(category_service: CategoryDep, category_id: int):
+async def delete_category(category_service: CategoryDep, category_id: int) -> None:
     # delete_category возвращает удаляемый category, но мы используем "чистый" REST подход
     # и вернем 204 без тела ответа
     await category_service.delete_category(category_id)
