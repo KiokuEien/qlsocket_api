@@ -14,28 +14,31 @@ async def get_brands(brand_service: BrandDep):
         'brands': brands,
     }
 
-@router.get('/brands/{brand_id}', response_model=BrandResponse)
+@router.get('/brands/{brand_id}', response_model=BrandResponse, summary='Get brand by id')
 async def get_brand(brand_service: BrandDep, brand_id: int):
     brand = await brand_service.get_brand(brand_id)
     return {
         'brand': brand,
     }
 
-@router.post('/brands/', response_model=BrandResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    '/brands/', response_model=BrandResponse, status_code=status.HTTP_201_CREATED,
+    summary='Create brand'
+)
 async def create_brand(brand_service: BrandDep, brand: BrandCreate):
     brand = await brand_service.create_brand(brand)
     return {
         'brand': brand,
     }
 
-@router.put('/brands/{brand_id}', response_model=BrandResponse)
+@router.put('/brands/{brand_id}', response_model=BrandResponse, summary='Update brand by id')
 async def update_brand(brand_service: BrandDep, brand_id: int, brand_update: BrandUpdate):
     brand = await brand_service.update_brand(brand_id, brand_update)
     return {
         'brand': brand,
     }
 
-@router.patch('/brands/{brand_id}', response_model=BrandResponse)
+@router.patch('/brands/{brand_id}', response_model=BrandResponse, summary='Partial update brand by id')
 async def update_brand_partial(
         brand_service: BrandDep, brand_id: int, brand_update_partial: BrandUpdatePartial
 ):
@@ -45,7 +48,7 @@ async def update_brand_partial(
     }
 
 @router.delete(
-    '/brands/{brand_id}', status_code=status.HTTP_204_NO_CONTENT
+    '/brands/{brand_id}', status_code=status.HTTP_204_NO_CONTENT, summary='Delete brand by id'
 )
 async def delete_brand(brand_service: BrandDep, brand_id: int) -> None:
     await brand_service.delete_brand(brand_id)

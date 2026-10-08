@@ -14,28 +14,34 @@ async def get_attributes(attribute_service: AttributeDep):
         'attributes': attributes,
     }
 
-@router.get('/attributes/{attribute_id}', response_model=AttributeResponse)
+@router.get('/attributes/{attribute_id}', response_model=AttributeResponse, summary='Get attribute by id')
 async def get_attribute(attribute_service: AttributeDep, attribute_id: int):
     attribute = await attribute_service.get_attribute(attribute_id)
     return {
         'attribute': attribute,
     }
 
-@router.post('/attributes/', response_model=AttributeResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    '/attributes/', response_model=AttributeResponse, status_code=status.HTTP_201_CREATED,
+    summary='Create attribute'
+)
 async def create_attribute(attribute_service: AttributeDep, attribute: AttributeCreate):
     attribute = await attribute_service.create_attribute(attribute)
     return {
         'attribute': attribute,
     }
 
-@router.put('/attributes/{attribute_id}', response_model=AttributeResponse)
+@router.put('/attributes/{attribute_id}', response_model=AttributeResponse, summary='Update attribute by id')
 async def update_attribute(attribute_service: AttributeDep, attribute_id: int, attribute_update: AttributeUpdate):
     attribute = await attribute_service.update_attribute(attribute_id, attribute_update)
     return {
         'attribute': attribute,
     }
 
-@router.patch('/attributes/{attribute_id}', response_model=AttributeResponse)
+@router.patch(
+    '/attributes/{attribute_id}', response_model=AttributeResponse,
+    summary='Partial update attribute by id'
+)
 async def update_attribute_partial(
         attribute_service: AttributeDep, attribute_id: int, attribute_update_partial: AttributeUpdatePartial
 ):
@@ -45,7 +51,7 @@ async def update_attribute_partial(
     }
 
 @router.delete(
-    '/attributes/{attribute_id}', status_code=status.HTTP_204_NO_CONTENT
+    '/attributes/{attribute_id}', status_code=status.HTTP_204_NO_CONTENT, summary='Delete attribute by id'
 )
 async def delete_attribute(attribute_service: AttributeDep, attribute_id: int) -> None:
     await attribute_service.delete_attribute(attribute_id)

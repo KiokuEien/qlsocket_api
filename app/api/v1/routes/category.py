@@ -14,28 +14,33 @@ async def get_categories(category_service: CategoryDep):
         'categories': categories,
     }
 
-@router.get('/categories/{category_id}', response_model=CategoryResponse)
+@router.get('/categories/{category_id}', response_model=CategoryResponse, summary='Get category by id')
 async def get_category(category_service: CategoryDep, category_id: int):
     category = await category_service.get_category(category_id)
     return {
         'category': category,
     }
 
-@router.post('/categories/', response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    '/categories/', response_model=CategoryResponse, status_code=status.HTTP_201_CREATED,
+    summary='Create category'
+)
 async def create_category(category_service: CategoryDep, category: CategoryCreate):
     category = await category_service.create_category(category)
     return {
         'category': category,
     }
 
-@router.put('/categories/{category_id}', response_model=CategoryResponse)
+@router.put('/categories/{category_id}', response_model=CategoryResponse, summary='Update category by id')
 async def update_category(category_service: CategoryDep, category_id: int, category_update: CategoryUpdate):
     category = await category_service.update_category(category_id, category_update)
     return {
         'category': category,
     }
 
-@router.patch('/categories/{category_id}', response_model=CategoryResponse)
+@router.patch(
+    '/categories/{category_id}', response_model=CategoryResponse, summary='Partial update category by id'
+)
 async def update_category_partial(
         category_service: CategoryDep, category_id: int, category_update_partial: CategoryUpdatePartial
 ):
@@ -45,7 +50,7 @@ async def update_category_partial(
     }
 
 @router.delete(
-    '/categories/{category_id}', status_code=status.HTTP_204_NO_CONTENT
+    '/categories/{category_id}', status_code=status.HTTP_204_NO_CONTENT, summary='Delete category by id'
 )
 async def delete_category(category_service: CategoryDep, category_id: int) -> None:
     # delete_category возвращает удаляемый category, но мы используем "чистый" REST подход
