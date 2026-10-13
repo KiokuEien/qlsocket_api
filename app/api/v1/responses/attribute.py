@@ -1,12 +1,13 @@
 from pydantic import BaseModel
+from typing import Generic, TypeVar, Sequence
 
-from app.schemas.attribute import AttributeRead
+T = TypeVar('T')
 
-class AttributesResponse(BaseModel):
+class AttributesResponse(BaseModel, Generic[T]):
     success: bool = True
     total: int
-    attributes: list[AttributeRead]
+    attributes: Sequence[T]
 
-class AttributeResponse(BaseModel):
+class AttributeResponse(BaseModel, Generic[T]):
     success: bool = True
-    attribute: AttributeRead
+    attribute: T

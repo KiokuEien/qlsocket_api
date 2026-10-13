@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.product import Product
 from app.models.attributes import Attribute, ProductAttribute
 from app.schemas.attribute import AttributeCreate, AttributeUpdate, AttributeUpdatePartial
 
@@ -20,17 +21,25 @@ class AttributeRepository:
     async def get_attribute(
             self,
             attribute_id: int,
-            with_products: bool = False,
+            with_products_articles: bool = False,
     ) -> Attribute | None:
         stmt = select(Attribute).where(Attribute.id == attribute_id)
-        if with_products:
-            stmt = stmt.options(selectinload(Attribute.product_attributes).selectinload(ProductAttribute.product))
+        if with_products_articles:
+            stmt = stmt.options(
+                selectinload(Attribute.product_attributes)
+                .selectinload(ProductAttribute.product)
+                .load_only(Product.id, Product.sku)
+            )
         return await self.session.scalar(stmt)
 
-    async def get_attributes(self, with_products: bool = False) -> Sequence[Attribute]:
+    async def get_attributes(self, with_products_articles: bool = False) -> Sequence[Attribute]:
         stmt = select(Attribute).order_by(Attribute.id)
-        if with_products:
-            stmt = stmt.options(selectinload(Attribute.product_attributes).selectinload(ProductAttribute.product))
+        if with_products_articles:
+            stmt = stmt.options(
+                selectinload(Attribute.product_attributes)
+                .selectinload(ProductAttribute.product)
+                .load_only(Product.id, Product.sku)
+            )
         result = await self.session.scalars(stmt)
         return result.all()
 

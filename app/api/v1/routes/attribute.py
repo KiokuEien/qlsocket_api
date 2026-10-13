@@ -1,28 +1,41 @@
 from fastapi import APIRouter, status
 
 from app.core.dependencies import AttributeDep
-from app.schemas.attribute import AttributeCreate, AttributeUpdate, AttributeUpdatePartial
-from app.api.v1.responses.attribute import AttributesResponse, AttributeResponse
+from app.api.v1.responses.attribute import AttributeResponse, AttributesResponse
+from app.schemas.attribute import (
+    AttributeCreate, AttributeUpdate, AttributeUpdatePartial, AttributeRead, AttributeReadWithProducts
+)
 
 router = APIRouter()
 
-@router.get('/attributes/', response_model=AttributesResponse, summary='Get all attributes')
-async def get_attributes(attribute_service: AttributeDep):
-    attributes = await attribute_service.get_attributes()
-    return {
-        'total': len(attributes),
-        'attributes': attributes,
-    }
+@router.get('/attributes/', summary='Get all attributes')
+async def get_attributes(attribute_service: AttributeDep, with_products_articles: bool = False):
+    attributes = await attribute_service.get_attributes(with_products_articles)
 
-@router.get('/attributes/{attribute_id}', response_model=AttributeResponse, summary='Get attribute by id')
-async def get_attribute(attribute_service: AttributeDep, attribute_id: int):
-    attribute = await attribute_service.get_attribute(attribute_id)
-    return {
-        'attribute': attribute,
-    }
+    schema = AttributeRead
+    if with_products_articles:
+        schema = AttributeReadWithProducts
+
+    return AttributesResponse[schema](
+        attributes=attributes,
+        total=len(attributes)
+    ).model_dump()
+
+@router.get('/attributes/{attribute_id}', summary='Get attribute by id')
+async def get_attribute(attribute_service: AttributeDep, attribute_id: int, with_products_articles: bool = False):
+    attribute = await attribute_service.get_attribute(attribute_id, with_products_articles)
+
+    if with_products_articles:
+        return AttributeResponse[AttributeReadWithProducts](
+            attribute=attribute
+        ).model_dump()
+
+    return AttributeResponse[AttributeRead](
+        attribute=attribute
+    ).model_dump()
 
 @router.post(
-    '/attributes/', response_model=AttributeResponse, status_code=status.HTTP_201_CREATED,
+    '/attributes/', response_model=AttributeResponse[AttributeRead], status_code=status.HTTP_201_CREATED,
     summary='Create attribute'
 )
 async def create_attribute(attribute_service: AttributeDep, attribute: AttributeCreate):
@@ -31,7 +44,10 @@ async def create_attribute(attribute_service: AttributeDep, attribute: Attribute
         'attribute': attribute,
     }
 
-@router.put('/attributes/{attribute_id}', response_model=AttributeResponse, summary='Update attribute by id')
+@router.put(
+    '/attributes/{attribute_id}', response_model=AttributeResponse[AttributeRead],
+    summary='Update attribute by id'
+)
 async def update_attribute(attribute_service: AttributeDep, attribute_id: int, attribute_update: AttributeUpdate):
     attribute = await attribute_service.update_attribute(attribute_id, attribute_update)
     return {
@@ -39,7 +55,7 @@ async def update_attribute(attribute_service: AttributeDep, attribute_id: int, a
     }
 
 @router.patch(
-    '/attributes/{attribute_id}', response_model=AttributeResponse,
+    '/attributes/{attribute_id}', response_model=AttributeResponse[AttributeRead],
     summary='Partial update attribute by id'
 )
 async def update_attribute_partial(

@@ -1,6 +1,8 @@
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
+from app.schemas.product import ProductRead
+
 class AttributeBase(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str = Field(max_length=100)
@@ -14,6 +16,9 @@ class AttributeRead(AttributeBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+class AttributeReadWithProducts(AttributeRead):
+    products: list[str]
 
 class AttributeUpdate(AttributeBase):
     pass

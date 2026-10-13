@@ -14,7 +14,7 @@ def register_exception_handler(app: FastAPI) -> None:
         error_message = {
             'code': 'CONFLICT_ERROR',
             'type': 'db_error',
-            'message': getattr(orig.__cause__, 'detail', 'Operation violates data constraints')
+            'message': getattr(orig.__cause__, 'message', 'Operation violates data constraints')
         }
 
         match orig.sqlstate:
@@ -24,6 +24,7 @@ def register_exception_handler(app: FastAPI) -> None:
                 error_message['code'] = 'FOREIGN_KEY_ERROR'
             case '23502':
                 error_message['code'] = 'NOT_NULL_ERROR'
+                error_message['message'] = 'A required field cannot be NULL or empty.'
 
 
         return JSONResponse(

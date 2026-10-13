@@ -19,16 +19,18 @@ class AttributeService:
     async def get_attribute(
             self,
             attribute_id: int,
-            with_products: bool = False,
+            with_products_articles: bool = False,
     ) -> Attribute:
-        attribute = await self.repo.get_attribute(attribute_id=attribute_id, with_products=with_products)
+        attribute = await self.repo.get_attribute(
+            attribute_id=attribute_id, with_products_articles=with_products_articles
+        )
         if not attribute:
             raise NotFoundError(message='An attribute with this id was not found')
         return attribute
 
-    async def get_attributes(self, with_products: bool = False) -> Sequence[Attribute]:
+    async def get_attributes(self, with_products_articles: bool = False) -> Sequence[Attribute]:
         # REST правило: коллекция существует всегда, даже если пустая
-        return await self.repo.get_attributes(with_products=with_products)
+        return await self.repo.get_attributes(with_products_articles=with_products_articles)
 
     async def update_attribute(
             self,
