@@ -4,8 +4,7 @@ from app.utils.unit_of_work import UnitOfWork
 from app.models.brand import Brand
 from app.repositories.brand import BrandRepository
 from app.core.exceptions import NotFoundError
-from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial
-
+from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial, BrandReadWithProductsArticles
 
 class BrandService:
     def __init__(self, uow: UnitOfWork):
@@ -19,16 +18,16 @@ class BrandService:
     async def get_brand(
             self,
             brand_id: int,
-            with_products: bool = False,
+            with_products_articles: bool = False,
     ) -> Brand:
-        brand = await self.repo.get_brand(brand_id=brand_id, with_products=with_products)
+        brand = await self.repo.get_brand(brand_id=brand_id, with_products_articles=with_products_articles)
         if not brand:
             raise NotFoundError(message='A brand with this id was not found')
         return brand
 
-    async def get_brands(self, with_products: bool = False) -> Sequence[Brand]:
+    async def get_brands(self, with_products_articles: bool = False) -> Sequence[Brand]:
         # REST правило: коллекция существует всегда, даже если пустая
-        return await self.repo.get_brands(with_products=with_products)
+        return await self.repo.get_brands(with_products_articles=with_products_articles)
 
     async def update_brand(
             self,

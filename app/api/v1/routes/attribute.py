@@ -19,7 +19,7 @@ async def get_attributes(attribute_service: AttributeDep, with_products_articles
     return AttributesResponse[schema](
         attributes=attributes,
         total=len(attributes)
-    ).model_dump()
+    )
 
 @router.get('/attributes/{attribute_id}', summary='Get attribute by id')
 async def get_attribute(attribute_service: AttributeDep, attribute_id: int, with_products_articles: bool = False):
@@ -28,11 +28,11 @@ async def get_attribute(attribute_service: AttributeDep, attribute_id: int, with
     if with_products_articles:
         return AttributeResponse[AttributeReadWithProducts](
             attribute=attribute
-        ).model_dump()
+        )
 
     return AttributeResponse[AttributeRead](
         attribute=attribute
-    ).model_dump()
+    )
 
 @router.post(
     '/attributes/', response_model=AttributeResponse[AttributeRead], status_code=status.HTTP_201_CREATED,

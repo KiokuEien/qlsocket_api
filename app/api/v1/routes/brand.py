@@ -1,12 +1,12 @@
 from fastapi import APIRouter, status
 
 from app.core.dependencies import BrandDep
-from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial
+from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial, BrandRead, BrandReadWithProductsArticles
 from app.api.v1.responses.brand import BrandsResponse, BrandResponse
 
 router = APIRouter()
 
-@router.get('/brands/', response_model=BrandsResponse, summary='Get all brands')
+@router.get('/brands/', response_model=BrandsResponse[BrandRead], summary='Get all brands')
 async def get_brands(brand_service: BrandDep):
     brands = await brand_service.get_brands()
     return {
@@ -14,15 +14,37 @@ async def get_brands(brand_service: BrandDep):
         'brands': brands,
     }
 
-@router.get('/brands/{brand_id}', response_model=BrandResponse, summary='Get brand by id')
+@router.get(
+    '/brands-with-products-articles/', response_model=BrandsResponse[BrandReadWithProductsArticles],
+    summary='Get all brands with products articles'
+)
+async def get_brands_with_products_articles(brand_service: BrandDep):
+    brands = await brand_service.get_brands(with_products_articles=True)
+    return {
+        'total': len(brands),
+        'brands': brands,
+    }
+
+
+@router.get('/brands/{brand_id}', response_model=BrandResponse[BrandRead], summary='Get brand by id')
 async def get_brand(brand_service: BrandDep, brand_id: int):
     brand = await brand_service.get_brand(brand_id)
     return {
         'brand': brand,
     }
 
+@router.get(
+    '/brands-with-products-articles/{brand_id}', response_model=BrandResponse[BrandReadWithProductsArticles],
+    summary='Get brand by id with products articles'
+)
+async def get_brand_with_products_articles(brand_service: BrandDep, brand_id: int):
+    brand = await brand_service.get_brand(brand_id, with_products_articles=True)
+    return {
+        'brand': brand,
+    }
+
 @router.post(
-    '/brands/', response_model=BrandResponse, status_code=status.HTTP_201_CREATED,
+    '/brands/', response_model=BrandResponse[BrandRead], status_code=status.HTTP_201_CREATED,
     summary='Create brand'
 )
 async def create_brand(brand_service: BrandDep, brand: BrandCreate):
@@ -31,14 +53,14 @@ async def create_brand(brand_service: BrandDep, brand: BrandCreate):
         'brand': brand,
     }
 
-@router.put('/brands/{brand_id}', response_model=BrandResponse, summary='Update brand by id')
+@router.put('/brands/{brand_id}', response_model=BrandResponse[BrandRead], summary='Update brand by id')
 async def update_brand(brand_service: BrandDep, brand_id: int, brand_update: BrandUpdate):
     brand = await brand_service.update_brand(brand_id, brand_update)
     return {
         'brand': brand,
     }
 
-@router.patch('/brands/{brand_id}', response_model=BrandResponse, summary='Partial update brand by id')
+@router.patch('/brands/{brand_id}', response_model=BrandResponse[BrandRead], summary='Partial update brand by id')
 async def update_brand_partial(
         brand_service: BrandDep, brand_id: int, brand_update_partial: BrandUpdatePartial
 ):

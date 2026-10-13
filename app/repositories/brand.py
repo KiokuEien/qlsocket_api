@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.models.product import Product
 from app.models.brand import Brand
 from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial
 
@@ -19,17 +20,17 @@ class BrandRepository:
     async def get_brand(
             self,
             brand_id: int,
-            with_products: bool = False,
+            with_products_articles: bool = False,
     ) -> Brand | None:
         stmt = select(Brand).where(Brand.id == brand_id)
-        if with_products:
-            stmt = stmt.options(selectinload(Brand.products))
+        if with_products_articles:
+            stmt = stmt.options(selectinload(Brand.products).load_only(Product.id, Product.sku))
         return await self.session.scalar(stmt)
 
-    async def get_brands(self, with_products: bool = False) -> Sequence[Brand]:
+    async def get_brands(self, with_products_articles: bool = False) -> Sequence[Brand]:
         stmt = select(Brand).order_by(Brand.id)
-        if with_products:
-            stmt = stmt.options(selectinload(Brand.products))
+        if with_products_articles:
+            stmt = stmt.options(selectinload(Brand.products).load_only(Product.id, Product.sku))
         result = await self.session.scalars(stmt)
         return result.all()
 

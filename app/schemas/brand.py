@@ -15,6 +15,9 @@ class BrandRead(BrandBase):
     created_at: datetime
     updated_at: datetime
 
+class BrandReadWithProductsArticles(BrandRead):
+    products_articles: list[str]
+
 class BrandUpdate(BrandBase):
     pass
 
