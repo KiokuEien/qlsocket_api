@@ -8,6 +8,8 @@ from app.schemas.attribute import (
 
 router = APIRouter()
 
+
+# Первый способ для управления products_articles: вручную возвращаем нужный response с нужной schema.
 @router.get('/attributes/', summary='Get all attributes')
 async def get_attributes(attribute_service: AttributeDep, with_products_articles: bool = False):
     attributes = await attribute_service.get_attributes(with_products_articles)

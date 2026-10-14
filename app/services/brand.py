@@ -4,7 +4,7 @@ from app.utils.unit_of_work import UnitOfWork
 from app.models.brand import Brand
 from app.repositories.brand import BrandRepository
 from app.core.exceptions import NotFoundError
-from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial, BrandReadWithProductsArticles
+from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial
 
 class BrandService:
     def __init__(self, uow: UnitOfWork):

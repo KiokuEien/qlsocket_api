@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.product import Product
 from app.models.category import Category
 from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryUpdatePartial
 
@@ -20,17 +21,17 @@ class CategoryRepository:
     async def get_category(
             self,
             category_id: int,
-            with_products: bool = False,
+            with_products_articles: bool = False,
     ) -> Category | None:
         stmt = select(Category).where(Category.id == category_id)
-        if with_products:
-            stmt = stmt.options(selectinload(Category.products))
+        if with_products_articles:
+            stmt = stmt.options(selectinload(Category.products).load_only(Product.id, Product.sku))
         return await self.session.scalar(stmt)
 
-    async def get_categories(self, with_products: bool = False) -> Sequence[Category]:
+    async def get_categories(self, with_products_articles: bool = False) -> Sequence[Category]:
         stmt = select(Category).order_by(Category.id)
-        if with_products:
-            stmt = stmt.options(selectinload(Category.products))
+        if with_products_articles:
+            stmt = stmt.options(selectinload(Category.products).load_only(Product.id, Product.sku))
         result = await self.session.scalars(stmt)
         return result.all()
 

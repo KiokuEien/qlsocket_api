@@ -1,3 +1,4 @@
+import re
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -20,6 +21,8 @@ def register_exception_handler(app: FastAPI) -> None:
         match orig.sqlstate:
             case '23505':
                 error_message['code'] = 'DUPLICATE_ERROR'
+                fields = re.search(r'\((.*?)\)=', getattr(orig.__cause__, 'detail')).group(1)
+                error_message['message'] = f'A record with these fields already exists: {fields}'
             case '23503':
                 error_message['code'] = 'FOREIGN_KEY_ERROR'
             case '23502':

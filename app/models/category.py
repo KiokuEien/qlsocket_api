@@ -17,3 +17,9 @@ class Category(Base, BaseMixin):
     products: Mapped[list[Product]] = relationship(
         'Product', back_populates='category', lazy='raise'
     )
+
+    @property
+    def products_articles(self) -> list[str]:
+        return [
+            product.sku for product in self.products
+        ]

@@ -1,11 +1,12 @@
 from fastapi import APIRouter, status
 
 from app.core.dependencies import BrandDep
-from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial, BrandRead, BrandReadWithProductsArticles
+from app.schemas.brand import BrandCreate, BrandUpdate, BrandUpdatePartial, BrandRead, BrandReadWithProducts
 from app.api.v1.responses.brand import BrandsResponse, BrandResponse
 
 router = APIRouter()
 
+# Второй способ для управления products_articles: используем разные endpoints
 @router.get('/brands/', response_model=BrandsResponse[BrandRead], summary='Get all brands')
 async def get_brands(brand_service: BrandDep):
     brands = await brand_service.get_brands()
@@ -15,7 +16,7 @@ async def get_brands(brand_service: BrandDep):
     }
 
 @router.get(
-    '/brands-with-products-articles/', response_model=BrandsResponse[BrandReadWithProductsArticles],
+    '/brands-with-products-articles/', response_model=BrandsResponse[BrandReadWithProducts],
     summary='Get all brands with products articles'
 )
 async def get_brands_with_products_articles(brand_service: BrandDep):
@@ -34,7 +35,7 @@ async def get_brand(brand_service: BrandDep, brand_id: int):
     }
 
 @router.get(
-    '/brands-with-products-articles/{brand_id}', response_model=BrandResponse[BrandReadWithProductsArticles],
+    '/brands-with-products-articles/{brand_id}', response_model=BrandResponse[BrandReadWithProducts],
     summary='Get brand by id with products articles'
 )
 async def get_brand_with_products_articles(brand_service: BrandDep, brand_id: int):

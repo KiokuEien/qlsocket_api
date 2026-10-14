@@ -19,16 +19,16 @@ class CategoryService:
     async def get_category(
             self,
             category_id: int,
-            with_products: bool = False,
+            with_products_articles: bool = False,
     ) -> Category:
-        category = await self.repo.get_category(category_id=category_id, with_products=with_products)
+        category = await self.repo.get_category(category_id=category_id, with_products_articles=with_products_articles)
         if not category:
             raise NotFoundError(message='A category with this id was not found')
         return category
 
-    async def get_categories(self, with_products: bool = False) -> Sequence[Category]:
+    async def get_categories(self, with_products_articles: bool = False) -> Sequence[Category]:
         # REST правило: коллекция существует всегда, даже если пустая
-        return await self.repo.get_categories(with_products=with_products)
+        return await self.repo.get_categories(with_products_articles=with_products_articles)
 
     async def update_category(
             self,
