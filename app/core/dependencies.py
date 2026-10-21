@@ -5,6 +5,7 @@ from app.utils.unit_of_work import UnitOfWork
 from app.services.category import CategoryService
 from app.services.brand import BrandService
 from app.services.attribute import AttributeService
+from app.services.product import ProductService
 
 async def get_uow() -> AsyncGenerator[UnitOfWork]:
     async with UnitOfWork() as uow:
@@ -21,7 +22,11 @@ async def get_brand_service(uow: UowDep) -> BrandService:
 async def get_attribute_service(uow: UowDep) -> AttributeService:
     return AttributeService(uow)
 
+async def get_product_service(uow: UowDep) -> ProductService:
+    return ProductService(uow)
+
 
 CategoryDep = Annotated[CategoryService, Depends(get_category_service)]
 BrandDep = Annotated[BrandService, Depends(get_brand_service)]
 AttributeDep = Annotated[AttributeService, Depends(get_attribute_service)]
+ProductDep = Annotated[ProductService, Depends(get_product_service)]

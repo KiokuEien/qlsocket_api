@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from sqlalchemy import String, Text, Numeric, ForeignKey, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -18,7 +18,7 @@ class Product(Base, BaseMixin):
 
     sku: Mapped[str] = mapped_column(unique=True)
     name: Mapped[str] = mapped_column(String(255))
-    description: Mapped[str| None] = mapped_column(Text)
+    description: Mapped[str | None] = mapped_column(Text)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     brand_id: Mapped[int] = mapped_column(
         ForeignKey('brands.id', ondelete='CASCADE', name='fk_product_brand_id')
@@ -34,5 +34,22 @@ class Product(Base, BaseMixin):
         'Category', back_populates='products', lazy='raise', uselist=False
     )
     product_attributes: Mapped[list[ProductAttribute]] = relationship(
-        'ProductAttribute', back_populates='product', lazy='raise'
+        'ProductAttribute', back_populates='product', lazy='raise', cascade='all, delete-orphan'
     )
+
+    @property
+    def attributes(self) -> list[ProductAttribute]:
+        return self.product_attributes
+
+    # @property
+    # def attributes(self) -> dict[tuple, str]:
+    #     return {
+    #         (pa.attribute_id, pa.attribute.name): pa.value for pa in self.product_attributes
+    #     }
+
+    # @property
+    # def attributes(self) -> list[dict[str, Any]]:
+    #     return [
+    #         {'id': pa.attribute_id, 'name': pa.attribute.name, 'value': pa.value}
+    #         for pa in self.product_attributes
+    #     ]

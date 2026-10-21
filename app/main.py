@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.api.v1.routes.category import router as category_router
 from app.api.v1.routes.brand import router as brand_router
 from app.api.v1.routes.attribute import router as attribute_router
+from app.api.v1.routes.product import router as product_router
 
 app = FastAPI(
     title='QLSocket API',
@@ -19,6 +20,7 @@ app = FastAPI(
 app.include_router(category_router, prefix=settings.api_v1_prefix, tags=['Category'])
 app.include_router(brand_router, prefix=settings.api_v1_prefix, tags=['Brand'])
 app.include_router(attribute_router, prefix=settings.api_v1_prefix, tags=['Attribute'])
+app.include_router(product_router, prefix=settings.api_v1_prefix, tags=['Product'])
 register_exception_handler(app)
 
 @app.get('/')
