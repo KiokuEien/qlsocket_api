@@ -19,7 +19,7 @@ class Category(Base, BaseMixin):
     )
 
     @property
-    def products_articles(self) -> list[str]:
+    def products_sku(self) -> list[str]:
         return [
             product.sku for product in self.products
         ]

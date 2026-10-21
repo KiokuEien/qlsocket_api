@@ -8,7 +8,7 @@ from app.core.exceptions import NotFoundError
 from app.schemas.product import ProductCreate, ProductUpdate, ProductUpdatePartial
 
 class ErrorsTexts(StrEnum):
-    NOT_FOUND_BY_ID = 'A product with this id was not found'
+    NOT_FOUND_BY_ID = 'A product with this SKU was not found'
 
 class ProductService:
     def __init__(self, uow: UnitOfWork):
@@ -21,10 +21,10 @@ class ProductService:
 
     async def get_product(
             self,
-            product_id: int,
+            product_sku: str,
             with_attributes: bool = False,
     ) -> Product:
-        product = await self.repo.get_product(product_id=product_id, with_attributes=with_attributes)
+        product = await self.repo.get_product(product_sku=product_sku, with_attributes=with_attributes)
         if not product:
             raise NotFoundError(message=ErrorsTexts.NOT_FOUND_BY_ID)
         return product
@@ -34,19 +34,19 @@ class ProductService:
 
     async def update_product(
             self,
-            product_id: int,
+            product_sku: str,
             product_update: ProductUpdate | ProductUpdatePartial,
     ) -> Product:
         product = await self.repo.update_product(
-            product_id=product_id,
+            product_sku=product_sku,
             product_update=product_update,
         )
         if not product:
             raise NotFoundError(message=ErrorsTexts.NOT_FOUND_BY_ID)
         return product
 
-    async def delete_product(self, product_id: int) -> Product:
-        product = await self.repo.delete_product(product_id=product_id)
+    async def delete_product(self, product_sku: str) -> Product:
+        product = await self.repo.delete_product(product_sku=product_sku)
         if not product:
             raise NotFoundError(message=ErrorsTexts.NOT_FOUND_BY_ID)
         return product

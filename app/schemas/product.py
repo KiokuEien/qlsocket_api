@@ -5,7 +5,6 @@ from typing import Any
 
 class ProductBase(BaseModel):
     model_config = ConfigDict(extra='forbid')
-    sku: str = Field(max_length=12)
     name: str = Field(max_length=255)
     description: str | None = None
     price: Decimal = Field(max_digits=10, decimal_places=2)
@@ -17,7 +16,7 @@ class ProductCreate(ProductBase):
 
 class ProductRead(ProductBase):
     model_config = ConfigDict(from_attributes=True)
-    id: int
+    sku: str
     created_at: datetime
     updated_at: datetime
 

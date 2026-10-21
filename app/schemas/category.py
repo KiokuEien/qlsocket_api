@@ -16,7 +16,7 @@ class CategoryRead(CategoryBase):
     updated_at: datetime
 
 class CategoryReadWithProducts(CategoryRead):
-    products_articles: list[str]
+    products_sku: list[str]
 
 class CategoryUpdate(CategoryBase):
     pass

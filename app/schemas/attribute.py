@@ -16,7 +16,7 @@ class AttributeRead(AttributeBase):
     updated_at: datetime
 
 class AttributeReadWithProducts(AttributeRead):
-    products_articles: list[str]
+    products_sku: list[str]
 
 class AttributeUpdate(AttributeBase):
     pass

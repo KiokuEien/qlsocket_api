@@ -1,0 +1,1 @@
+from app.core.events import generate_sku_event

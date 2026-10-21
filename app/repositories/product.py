@@ -60,8 +60,8 @@ class ProductRepository:
         # scalar_one() не допускает None в типе результата
         return result.scalar_one()
 
-    async def get_product(self, product_id: int, with_attributes: bool = False) -> Product | None:
-        stmt = select(Product).where(Product.id == product_id)
+    async def get_product(self, product_sku: str, with_attributes: bool = False) -> Product | None:
+        stmt = select(Product).where(Product.sku == product_sku)
         if with_attributes:
             stmt = stmt.options(selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute))
         return await self.session.scalar(stmt)
@@ -74,11 +74,11 @@ class ProductRepository:
         return result.all()
 
     async def update_product(
-            self, product_id: int, product_update: ProductUpdate | ProductUpdatePartial
+            self, product_sku: str, product_update: ProductUpdate | ProductUpdatePartial
     ) -> Product | None:
         stmt = (
             select(Product)
-            .where(Product.id == product_id)
+            .where(Product.sku == product_sku)
             .options(selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute))
         )
         product: Product | None = await self.session.scalar(stmt)
@@ -92,8 +92,8 @@ class ProductRepository:
         await self.session.refresh(product)
         return product
 
-    async def delete_product(self, product_id: int):
-        product = await self.session.scalar(select(Product).where(Product.id == product_id))
+    async def delete_product(self, product_sku: str):
+        product = await self.session.scalar(select(Product).where(Product.sku == product_sku))
         if not product:
             return None
         await self.session.delete(product)

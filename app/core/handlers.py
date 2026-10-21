@@ -4,11 +4,25 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
-from app.core.exceptions import AppError
+from app.core.exceptions import AppError, GenerationError
 
 
 
 def register_exception_handler(app: FastAPI) -> None:
+    @app.exception_handler(GenerationError)
+    async def generation_error_handler(request: Request, exc: GenerationError):
+        return JSONResponse(
+            status_code=500,
+            content={
+                'success': False,
+                'error': {
+                    'code': 'GENERATION_ERROR',
+                    'type': 'app_error',
+                    'message': exc.message,
+                }
+            }
+        )
+
     @app.exception_handler(IntegrityError)
     async def integrity_error_handler(request: Request, exc: IntegrityError):
         orig = exc.orig
@@ -85,6 +99,7 @@ def register_exception_handler(app: FastAPI) -> None:
                 'success': False,
                 'error': {
                     'code': 'INTERNAL_SERVER_ERROR',
+                    'type': 'app_error',
                     'message': 'Internal server error'
                 }
             }

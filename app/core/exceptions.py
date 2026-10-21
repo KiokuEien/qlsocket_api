@@ -15,3 +15,8 @@ class ForbiddenError(AppError):
     status_code = 403
     code = 'FORBIDDEN'
     message = 'Access denied'
+
+class GenerationError(Exception):
+    def __init__(self, message: str):
+        self.message = message
+    

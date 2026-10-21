@@ -18,7 +18,7 @@ class Attribute(Base, BaseMixin):
 
     # Декоратор @computeed_fields позволяет pydantic автоматически включать поле в JSON-response
     @property
-    def products_articles(self) -> list[str]:
+    def products_sku(self) -> list[str]:
         return [
             pa.product.sku for pa in self.product_attributes
         ]
