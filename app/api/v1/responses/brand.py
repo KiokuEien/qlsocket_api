@@ -1,7 +1,4 @@
 from pydantic import BaseModel
-from typing import Generic, TypeVar
-
-from app.schemas.brand import BrandRead, BrandReadWithProducts
 
 class BrandsResponse[T](BaseModel):
     success: bool = True

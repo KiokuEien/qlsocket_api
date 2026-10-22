@@ -3,6 +3,16 @@ from decimal import Decimal
 from datetime import datetime
 from typing import Any
 
+class ProductBrandRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    name: str
+
+class ProductCategoryRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    name: str
+
 class ProductBase(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str = Field(max_length=255)
@@ -14,9 +24,14 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     attributes: dict[int, str] | None = None
 
-class ProductRead(ProductBase):
+class ProductRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     sku: str
+    name: str
+    description: str
+    price: Decimal
+    brand: ProductBrandRead
+    category: ProductCategoryRead
     created_at: datetime
     updated_at: datetime
 

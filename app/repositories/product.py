@@ -1,9 +1,8 @@
 from typing import Sequence
-from unittest.mock import patch
 
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 
 from app.models.product import Product
 from app.models.attributes import ProductAttribute
@@ -54,22 +53,34 @@ class ProductRepository:
         stmt = (
             select(Product)
             .where(Product.id == product.id)
-            .options(selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute))
+            .options(joinedload(Product.brand), joinedload(Product.category))
+            .options(
+                selectinload(Product.product_attributes)
+                .selectinload(ProductAttribute.attribute)
+            )
         )
         result = await self.session.execute(stmt)
         # scalar_one() не допускает None в типе результата
         return result.scalar_one()
 
     async def get_product(self, product_sku: str, with_attributes: bool = False) -> Product | None:
-        stmt = select(Product).where(Product.sku == product_sku)
+        stmt = (
+            select(Product)
+            .where(Product.sku == product_sku).options(joinedload(Product.brand), joinedload(Product.category))
+        )
         if with_attributes:
             stmt = stmt.options(selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute))
         return await self.session.scalar(stmt)
 
     async def get_products(self, with_attributes: bool = False) -> Sequence[Product]:
-        stmt = select(Product).order_by(Product.id)
+        stmt = (
+            select(Product)
+            .order_by(Product.id).options(joinedload(Product.brand), joinedload(Product.category))
+        )
         if with_attributes:
-            stmt = stmt.options(selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute))
+            stmt = stmt.options(
+                selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute)
+            )
         result = await self.session.scalars(stmt)
         return result.all()
 
@@ -79,6 +90,7 @@ class ProductRepository:
         stmt = (
             select(Product)
             .where(Product.sku == product_sku)
+            .options(joinedload(Product.brand), joinedload(Product.category))
             .options(selectinload(Product.product_attributes).selectinload(ProductAttribute.attribute))
         )
         product: Product | None = await self.session.scalar(stmt)

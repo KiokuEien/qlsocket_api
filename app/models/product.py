@@ -41,6 +41,7 @@ class Product(Base, BaseMixin):
     def attributes(self) -> list[ProductAttribute]:
         return self.product_attributes
 
+
     # @property
     # def attributes(self) -> dict[tuple, str]:
     #     return {

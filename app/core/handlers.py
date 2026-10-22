@@ -26,6 +26,7 @@ def register_exception_handler(app: FastAPI) -> None:
     @app.exception_handler(IntegrityError)
     async def integrity_error_handler(request: Request, exc: IntegrityError):
         orig = exc.orig
+        print(orig.__cause__.__dict__)
         error_message = {
             'code': 'CONFLICT_ERROR',
             'type': 'db_error',
@@ -39,10 +40,18 @@ def register_exception_handler(app: FastAPI) -> None:
                 error_message['message'] = f'A record with these fields already exists: {fields}'
             case '23503':
                 error_message['code'] = 'FOREIGN_KEY_ERROR'
+                fields = re.search(r'\((.*?)\)=\(', getattr(orig.__cause__, 'detail')).group(1)
+                error_message['message'] = f'A referenced record was not found: {fields}'
             case '23502':
                 error_message['code'] = 'NOT_NULL_ERROR'
-                error_message['message'] = 'A required field cannot be NULL or empty.'
-
+                column = getattr(orig.__cause__, 'column_name', None)
+                message = (
+                    f'The operation violates a NOT NULL constraint on field {column} of another record'
+                    if column else 'The operation violates a NOT NULL constraint'
+                )
+                error_message['message'] = message
+            case _:
+                raise exc
 
         return JSONResponse(
             status_code=409,
