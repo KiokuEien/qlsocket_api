@@ -4,7 +4,7 @@ from datetime import datetime
 class AttributeBase(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str = Field(max_length=100)
-    description: str | None = Field(max_length=1000)
+    description: str | None = Field(default=None, max_length=1000)
 
 class AttributeCreate(AttributeBase):
     pass

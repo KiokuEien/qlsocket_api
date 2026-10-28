@@ -19,7 +19,9 @@ class Settings(BaseSettings):
     )
 
     db: DbSettings = DbSettings()
+    test_db: DbSettings = DbSettings()
 
     api_v1_prefix: str = '/api/v1'
 
 settings = Settings()
+

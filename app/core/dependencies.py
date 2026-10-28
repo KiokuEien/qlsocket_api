@@ -11,6 +11,10 @@ async def get_uow() -> AsyncGenerator[UnitOfWork]:
     async with UnitOfWork() as uow:
         yield uow
 
+async def get_uow_for_tests() -> AsyncGenerator[UnitOfWork]:
+    async with UnitOfWork(use_test_db=True) as uow:
+        yield uow
+
 UowDep = Annotated[UnitOfWork, Depends(get_uow)]
 
 async def get_category_service(uow: UowDep) -> CategoryService:
