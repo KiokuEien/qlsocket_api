@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import db_helper, test_db_helper
+from app.core.database import db_helper
 
 '''
 Unit of Work (UoW) - это объект, который управляет транзакциями и гарантирует,
@@ -10,22 +10,27 @@ Unit of Work (UoW) - это объект, который управляет тр
 '''
 
 class UnitOfWork:
-    def __init__(self, use_test_db: bool = False):
-        self.db_helper = test_db_helper if use_test_db else db_helper
+    def __init__(self, session: AsyncSession | None = None):
+        if session is None:
+            self.session = db_helper.session_factory()
+        else:
+            self.session = session
     async def __aenter__(self):
-        self.session: AsyncSession = self.db_helper.session_factory()
         # session.rollback() делает полный откат всех текущей сессии (всех транзакций)
         # tx.rollback() делает откат конкретной транзакции (система вложенных транзакций - savepoints)
-        #
         self._tx = await self.session.begin()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         try:
-            if exc_val:
+            if exc_type is not None:
                 await self._tx.rollback()
             else:
                 await self._tx.commit()
+        except Exception as e:
+            if self._tx.is_active:
+                await self._tx.rollback()
+            raise e
         finally:
             await self.session.close()
 

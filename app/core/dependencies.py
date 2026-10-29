@@ -7,12 +7,16 @@ from app.services.brand import BrandService
 from app.services.attribute import AttributeService
 from app.services.product import ProductService
 
+'''
+Depends - механизм внедрения зависимостей FastAPI. Проще говоря, инструкция с пошаговыми действиями для него.
+Depends - класс, объект которого хранит в себе то, что нужно вызвать для FastAPI.
+
+app.dependency_overrides[standard_dep] = override_dep - позволяет "подменить" зависимость.
+Когда FastAPI встретит standard_dep - он вызовет override_dep.
+'''
+
 async def get_uow() -> AsyncGenerator[UnitOfWork]:
     async with UnitOfWork() as uow:
-        yield uow
-
-async def get_uow_for_tests() -> AsyncGenerator[UnitOfWork]:
-    async with UnitOfWork(use_test_db=True) as uow:
         yield uow
 
 UowDep = Annotated[UnitOfWork, Depends(get_uow)]
